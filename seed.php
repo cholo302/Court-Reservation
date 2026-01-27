@@ -5,7 +5,7 @@
  * Command: php database/seed.php
  */
 
-require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/config/database.php';
 
 class DatabaseSeeder
 {
@@ -150,7 +150,7 @@ class DatabaseSeeder
         
         foreach ($courts as $court) {
             $stmt = $this->db->prepare("
-                INSERT INTO courts (court_type_id, name, description, location, price_per_hour, peak_price_per_hour, weekend_price_per_hour, max_players, amenities, status)
+                INSERT IGNORE INTO courts (court_type_id, name, description, location, price_per_hour, peak_price_per_hour, weekend_price_per_hour, max_players, amenities, status)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ");
             $stmt->execute([
@@ -176,20 +176,20 @@ class DatabaseSeeder
         
         // Get all courts
         $courts = $this->db->query("SELECT id FROM courts")->fetchAll(PDO::FETCH_COLUMN);
+        $days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         
         $count = 0;
         foreach ($courts as $courtId) {
-            // Add schedules for each day of the week
-            for ($day = 0; $day <= 6; $day++) {
+            foreach ($days as $day) {
                 $stmt = $this->db->prepare("
-                    INSERT INTO court_schedules (court_id, day_of_week, open_time, close_time, is_available)
+                    INSERT IGNORE INTO court_schedules (court_id, day_of_week, open_time, close_time, is_available)
                     VALUES (?, ?, ?, ?, ?)
                 ");
                 
-                // Different hours for weekdays vs weekends
-                if ($day >= 1 && $day <= 5) {
+                // Weekdays: Monday to Friday
+                if (in_array($day, ['Monday','Tuesday','Wednesday','Thursday','Friday'])) {
                     $stmt->execute([$courtId, $day, '06:00:00', '22:00:00', 1]);
-                } else {
+                } else { // Weekends: Saturday & Sunday
                     $stmt->execute([$courtId, $day, '07:00:00', '21:00:00', 1]);
                 }
                 $count++;

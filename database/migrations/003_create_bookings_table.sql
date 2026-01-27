@@ -1,31 +1,32 @@
 -- Bookings Table
 CREATE TABLE IF NOT EXISTS bookings (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     booking_code VARCHAR(20) UNIQUE NOT NULL,
-    user_id INT NOT NULL,
-    court_id INT NOT NULL,
+    user_id INTEGER NOT NULL,
+    court_id INTEGER NOT NULL,
     booking_date DATE NOT NULL,
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
     duration_hours DECIMAL(3, 1) NOT NULL,
-    is_half_court BOOLEAN DEFAULT FALSE,
+    is_half_court INTEGER DEFAULT 0,
     
     -- Pricing
-    hourly_rate DECIMAL(10, 2) NOT NULL,
+    price_per_hour DECIMAL(10, 2) NOT NULL,
     total_amount DECIMAL(10, 2) NOT NULL,
     downpayment_amount DECIMAL(10, 2) DEFAULT 0,
     balance_amount DECIMAL(10, 2) DEFAULT 0,
     
     -- Status
-    status ENUM('pending', 'confirmed', 'paid', 'completed', 'cancelled', 'no_show', 'expired') DEFAULT 'pending',
-    payment_status ENUM('unpaid', 'partial', 'paid', 'refunded') DEFAULT 'unpaid',
-    payment_type ENUM('online', 'venue') DEFAULT 'online',
+    status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'confirmed', 'paid', 'completed', 'cancelled', 'no_show', 'expired')),
+    payment_status TEXT DEFAULT 'unpaid' CHECK(payment_status IN ('unpaid', 'partial', 'paid', 'refunded')),
+    payment_type TEXT DEFAULT 'online' CHECK(payment_type IN ('online', 'venue')),
     
     -- QR Codes
-    entry_qr_code VARCHAR(255), -- QR code for entrance verification
+    entry_qr_code VARCHAR(255),
+    scanned_at TIMESTAMP NULL,
     
     -- Additional Info
-    player_count INT,
+    player_count INTEGER,
     notes TEXT,
     admin_notes TEXT,
     
@@ -34,16 +35,17 @@ CREATE TABLE IF NOT EXISTS bookings (
     paid_at TIMESTAMP NULL,
     cancelled_at TIMESTAMP NULL,
     cancellation_reason TEXT,
-    expires_at TIMESTAMP NULL, -- For pay-at-venue reservations
+    expires_at TIMESTAMP NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
     FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (court_id) REFERENCES courts(id),
-    INDEX idx_user (user_id),
-    INDEX idx_court (court_id),
-    INDEX idx_date (booking_date),
-    INDEX idx_status (status),
-    INDEX idx_code (booking_code),
-    INDEX idx_court_date (court_id, booking_date)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    FOREIGN KEY (court_id) REFERENCES courts(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_bookings_user ON bookings(user_id);
+CREATE INDEX IF NOT EXISTS idx_bookings_court ON bookings(court_id);
+CREATE INDEX IF NOT EXISTS idx_bookings_date ON bookings(booking_date);
+CREATE INDEX IF NOT EXISTS idx_bookings_status ON bookings(status);
+CREATE INDEX IF NOT EXISTS idx_bookings_code ON bookings(booking_code);
+CREATE INDEX IF NOT EXISTS idx_bookings_court_date ON bookings(court_id, booking_date);

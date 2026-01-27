@@ -1,17 +1,26 @@
 <?php
 require 'config/database.php';
 
-$pdo = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASS);
+$db = Database::getInstance()->getConnection();
 
-// Add scanned_at column if it doesn't exist
-try {
-    $pdo->exec('ALTER TABLE bookings ADD COLUMN scanned_at DATETIME NULL AFTER entry_qr_code');
-    echo "scanned_at column added successfully\n";
-} catch (Exception $e) {
-    echo "Column may already exist or error: " . $e->getMessage() . "\n";
+// Get all tables
+$stmt = $db->query("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name");
+$tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+echo "=== SQLite Database Schema ===\n\n";
+echo "Tables in database:\n";
+foreach ($tables as $table) {
+    echo "  ✓ $table\n";
+    
+    // Get column info
+    $columnStmt = $db->query("PRAGMA table_info($table)");
+    $columns = $columnStmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    echo "    Columns:\n";
+    foreach ($columns as $col) {
+        echo "      - " . $col['name'] . " (" . $col['type'] . ")\n";
+    }
+    echo "\n";
 }
 
-$stmt = $pdo->query('DESCRIBE bookings');
-$columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
-echo "Bookings columns:\n";
-print_r($columns);
+echo "✓ SQLite Database schema check complete!\n";
