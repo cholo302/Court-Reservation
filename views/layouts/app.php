@@ -50,12 +50,7 @@
                         <a href="<?= url('courts') ?>" class="text-gray-700 hover:text-ph-blue px-3 py-2 rounded-md text-sm font-medium transition">
                             <i class="fas fa-map-marker-alt mr-1"></i> Browse Courts
                         </a>
-                        <a href="<?= url('courts/type/basketball') ?>" class="text-gray-700 hover:text-ph-blue px-3 py-2 rounded-md text-sm font-medium transition">
-                            <i class="fas fa-basketball-ball mr-1"></i> Basketball
-                        </a>
-                        <a href="<?= url('courts/type/badminton') ?>" class="text-gray-700 hover:text-ph-blue px-3 py-2 rounded-md text-sm font-medium transition">
-                            <i class="fas fa-table-tennis mr-1"></i> Badminton
-                        </a>
+                        
                     </div>
                 </div>
                 
@@ -85,9 +80,7 @@
                                     <i class="fas fa-user mr-2"></i> Profile
                                 </a>
                                 <?php if (isAdmin()): ?>
-                                <a href="<?= url('admin') ?>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                    <i class="fas fa-cog mr-2"></i> Admin Panel
-                                </a>
+                                
                                 <?php endif; ?>
                                 <hr class="my-1">
                                 <a href="<?= url('logout') ?>" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
@@ -157,7 +150,7 @@
                         <span class="text-xl font-bold"><?= APP_NAME ?></span>
                     </div>
                     <p class="text-gray-400 text-sm">
-                        Book sports courts easily in the Philippines. Basketball, badminton, tennis, and more.
+                        Book sports courts easily in the Philippines. Basketball, Badminton, Volleyball, and more.
                     </p>
                 </div>
                 
@@ -175,8 +168,8 @@
                     <ul class="space-y-2 text-gray-400">
                         <li><a href="<?= url('courts/type/basketball') ?>" class="hover:text-white transition">Basketball</a></li>
                         <li><a href="<?= url('courts/type/badminton') ?>" class="hover:text-white transition">Badminton</a></li>
-                        <li><a href="<?= url('courts/type/tennis') ?>" class="hover:text-white transition">Tennis</a></li>
-                        <li><a href="<?= url('courts/type/futsal') ?>" class="hover:text-white transition">Futsal</a></li>
+                        <li><a href="<?= url('courts/type/Volleyball') ?>" class="hover:text-white transition">Volleyball</a></li>
+                        <li><a href="<?= url('courts/type/badminton') ?>" class="hover:text-white transition">PingPong</a></li>
                     </ul>
                 </div>
                 

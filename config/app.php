@@ -16,7 +16,7 @@ if (defined('APP_NAME')) {
 }
 
 // Application Settings
-define('APP_NAME', 'Court Reservation PH');
+define('APP_NAME', 'Court Reservation System');
 define('APP_URL', 'http://localhost/Court-Reservation');
 define('APP_TIMEZONE', 'Asia/Manila');
 define('APP_CURRENCY', '₱');
