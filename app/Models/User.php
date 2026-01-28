@@ -1,135 +1,126 @@
 <?php
-
-namespace App\Models;
-
-use PDO;
-use Exception;
-
-class User
-{
-    protected static $connection;
+/**
+ * User Model
+ */
+class User extends Model {
+    protected $table = 'users';
+    protected $fillable = [
+        'name', 'email', 'phone', 'password', 'role', 'profile_image',
+        'email_verified_at', 'phone_verified_at', 'is_blacklisted', 
+        'blacklist_reason', 'provider', 'provider_id', 'remember_token'
+    ];
     
-    public static function getConnection()
-    {
-        if (!self::$connection) {
-            try {
-                $dbPath = realpath(__DIR__ . '/../../storage/database.sqlite');
-                self::$connection = new PDO(
-                    'sqlite:' . $dbPath,
-                    null,
-                    null,
-                    [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-                );
-                // Enable foreign keys for SQLite
-                self::$connection->exec('PRAGMA foreign_keys = ON');
-            } catch (Exception $e) {
-                die('Database Connection Error: ' . $e->getMessage());
-            }
-        }
-        return self::$connection;
-    }
-    
-    /**
-     * Find user by ID
-     */
-    public static function find($id)
-    {
-        $pdo = self::getConnection();
-        $stmt = $pdo->prepare('SELECT * FROM users WHERE id = ?');
-        $stmt->execute([$id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-    
-    /**
-     * Find user by email
-     */
-    public static function findByEmail($email)
-    {
-        $pdo = self::getConnection();
-        $stmt = $pdo->prepare('SELECT * FROM users WHERE email = ?');
+    public function findByEmail($email) {
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE email = ?");
         $stmt->execute([$email]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
     
-    /**
-     * Create new user
-     */
-    public static function create($data)
-    {
-        $pdo = self::getConnection();
-        $stmt = $pdo->prepare('
-            INSERT INTO users (name, email, phone, password, role, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, datetime("now"), datetime("now"))
-        ');
-        
-        try {
-            $stmt->execute([
-                $data['name'],
-                $data['email'],
-                $data['phone'] ?? null,
-                password_hash($data['password'], PASSWORD_BCRYPT),
-                $data['role'] ?? 'user'
-            ]);
-            
-            return self::find($pdo->lastInsertId());
-        } catch (Exception $e) {
-            throw new Exception('Error creating user: ' . $e->getMessage());
-        }
+    public function findByPhone($phone) {
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE phone = ?");
+        $stmt->execute([$phone]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
     
-    /**
-     * Authenticate user with email and password
-     */
-    public static function authenticate($email, $password)
-    {
-        $user = self::findByEmail($email);
-        
-        if (!$user) {
-            return false;
-        }
-        
-        if (!password_verify($password, $user['password'])) {
-            return false;
-        }
-        
-        return $user;
+    public function findByProvider($provider, $providerId) {
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE provider = ? AND provider_id = ?");
+        $stmt->execute([$provider, $providerId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
     
-    /**
-     * Update user
-     */
-    public static function update($id, $data)
-    {
-        $pdo = self::getConnection();
-        
-        $allowedFields = ['name', 'email', 'phone', 'profile_image', 'role'];
-        $updates = [];
-        $values = [];
-        
-        foreach ($data as $key => $value) {
-            if (in_array($key, $allowedFields)) {
-                $updates[] = "$key = ?";
-                $values[] = $value;
-            }
+    public function authenticate($email, $password) {
+        $user = $this->findByEmail($email);
+        if ($user && password_verify($password, $user['password'])) {
+            return $user;
         }
-        
-        if (empty($updates)) {
-            return false;
-        }
-        
-        $values[] = $id;
-        $stmt = $pdo->prepare('UPDATE users SET ' . implode(', ', $updates) . ', updated_at = datetime("now") WHERE id = ?');
-        return $stmt->execute($values);
+        return false;
     }
     
-    /**
-     * Check if user exists
-     */
-    public static function exists($email)
-    {
-        return self::findByEmail($email) !== false;
+    public function createUser($data) {
+        $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+        return $this->create($data);
     }
-}
-
+    
+    public function updatePassword($userId, $newPassword) {
+        $stmt = $this->db->prepare("UPDATE users SET password = ? WHERE id = ?");
+        return $stmt->execute([password_hash($newPassword, PASSWORD_DEFAULT), $userId]);
+    }
+    
+    public function getBookings($userId, $status = null) {
+        $sql = "SELECT b.*, c.name as court_name, ct.name as court_type 
+                FROM bookings b 
+                JOIN courts c ON b.court_id = c.id 
+                JOIN court_types ct ON c.court_type_id = ct.id
+                WHERE b.user_id = ?";
+        $params = [$userId];
+        
+        if ($status) {
+            $sql .= " AND b.status = ?";
+            $params[] = $status;
+        }
+        
+        $sql .= " ORDER BY b.booking_date DESC, b.start_time DESC";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function blacklist($userId, $reason) {
+        $stmt = $this->db->prepare("UPDATE users SET is_blacklisted = 1, blacklist_reason = ? WHERE id = ?");
+        return $stmt->execute([$reason, $userId]);
+    }
+    
+    public function unblacklist($userId) {
+        $stmt = $this->db->prepare("UPDATE users SET is_blacklisted = 0, blacklist_reason = NULL WHERE id = ?");
+        return $stmt->execute([$userId]);
+    }
+    
+    public function isBlacklisted($userId) {
+        $user = $this->find($userId);
+        return $user && $user['is_blacklisted'];
+    }
+    
+    public function getStats($userId = null) {
+        if ($userId !== null) {
+            // Get stats for a specific user
+            $stmt = $this->db->prepare(
+                "SELECT 
+                    COUNT(*) as total_bookings,
+                    SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed_bookings,
+                    SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) as cancelled_bookings,
+                    SUM(CASE WHEN status = 'no_show' THEN 1 ELSE 0 END) as no_shows,
+                    COALESCE(SUM(total_amount), 0) as total_spent
+                 FROM bookings WHERE user_id = ?"
+            );
+            $stmt->execute([$userId]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        }
+        
+        // Get overall user stats for admin
+        $stats = [];
+        
+        // Active this month
+        $stmt = $this->db->prepare(
+            "SELECT COUNT(DISTINCT user_id) FROM bookings WHERE MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())"
+        );
+        $stmt->execute();
+        $stats['active_month'] = $stmt->fetchColumn();
+        
+        // New this week
+        $stmt = $this->db->prepare(
+            "SELECT COUNT(*) FROM users WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)"
+        );
+        $stmt->execute();
+        $stats['new_week'] = $stmt->fetchColumn();
+        
+        // Blacklisted
+        $stmt = $this->db->prepare(
+            "SELECT COUNT(*) FROM users WHERE is_blacklisted = 1"
+        );
+        $stmt->execute();
+        $stats['blacklisted'] = $stmt->fetchColumn();
+        
+        return $stats;
     }
 }

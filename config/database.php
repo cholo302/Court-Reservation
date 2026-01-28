@@ -1,23 +1,13 @@
 <?php
 /**
- * SQLite Database Configuration
+ * Database Configuration
  * Court Reservation System
  */
 
-// Load .env
-if (file_exists(__DIR__ . '/../.env')) {
-    $envLines = file(__DIR__ . '/../.env', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    foreach ($envLines as $line) {
-        if (strpos($line, '=') !== false && strpos($line, '#') !== 0) {
-            list($key, $value) = explode('=', $line, 2);
-            $key = trim($key);
-            $value = trim($value);
-            if (!getenv($key)) {
-                putenv("$key=$value");
-            }
-        }
-    }
-}
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'court_reservation');
+define('DB_USER', 'root');
+define('DB_PASS', ''); // Default XAMPP has no password
 
 class Database {
     private static $instance = null;
@@ -25,17 +15,59 @@ class Database {
     
     private function __construct() {
         try {
-            $dbPath = realpath(__DIR__ . '/..') . '/' . getenv('DB_DATABASE');
             $this->connection = new PDO(
-                "sqlite:" . $dbPath,
-                null,
-                null,
-                [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+                "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
+                DB_USER,
+                DB_PASS,
+                [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                    PDO::ATTR_EMULATE_PREPARES => false,
+                ]
             );
-            // Enable foreign keys
-            $this->connection->exec('PRAGMA foreign_keys = ON');
         } catch (PDOException $e) {
-            die('Database connection error: ' . $e->getMessage());
+            // If database doesn't exist, create it
+            if (strpos($e->getMessage(), 'Unknown database') !== false) {
+                $this->createDatabase();
+            } else {
+                die("Database connection failed: " . $e->getMessage());
+            }
+        }
+    }
+    
+    private function createDatabase() {
+        try {
+            $pdo = new PDO(
+                "mysql:host=" . DB_HOST,
+                DB_USER,
+                DB_PASS
+            );
+            $pdo->exec("CREATE DATABASE IF NOT EXISTS " . DB_NAME . " CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+            
+            $this->connection = new PDO(
+                "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
+                DB_USER,
+                DB_PASS,
+                [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                ]
+            );
+            
+            // Run migrations
+            $this->runMigrations();
+        } catch (PDOException $e) {
+            die("Failed to create database: " . $e->getMessage());
+        }
+    }
+    
+    private function runMigrations() {
+        $migrations = glob(__DIR__ . '/../database/migrations/*.sql');
+        sort($migrations);
+        
+        foreach ($migrations as $migration) {
+            $sql = file_get_contents($migration);
+            $this->connection->exec($sql);
         }
     }
     

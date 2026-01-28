@@ -52,7 +52,7 @@
                     </div>
                     <div>
                         <p class="text-sm text-gray-500">Number of Players</p>
-                        <p class="font-medium"><?= $booking['num_players'] ?> players</p>
+                        <p class="font-medium"><?= $booking['num_players'] ?? 'N/A' ?> players</p>
                     </div>
                 </div>
                 
@@ -74,7 +74,7 @@
                     </div>
                     <div>
                         <p class="font-medium"><?= $booking['user_name'] ?></p>
-                        <p class="text-sm text-gray-500"><?= $booking['user_email'] ?></p>
+                        <p class="text-sm text-gray-500"><?= $booking['user_email'] ?? 'N/A' ?></p>
                     </div>
                 </div>
                 
@@ -190,7 +190,7 @@
                     </form>
                     <?php endif; ?>
                     
-                    <?php if ($payment && $payment['status'] === 'pending'): ?>
+                    <?php if (isset($payment) && $payment && $payment['status'] === 'pending'): ?>
                     <form action="<?= url('admin/payments/' . $payment['id'] . '/verify') ?>" method="POST">
                         <input type="hidden" name="_token" value="<?= csrf_token() ?>">
                         <button type="submit" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition">
@@ -231,7 +231,7 @@
                         </div>
                     </div>
                     
-                    <?php if ($payment): ?>
+                    <?php if (isset($payment) && $payment): ?>
                     <div class="flex items-start">
                         <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
                             <i class="fas fa-credit-card text-yellow-600 text-xs"></i>

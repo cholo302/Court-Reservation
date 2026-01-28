@@ -159,6 +159,11 @@ class Controller {
         }
     }
     
+    protected function startSession($user) {
+        $_SESSION['user'] = $user;
+        $_SESSION['user_id'] = $user['id'];
+    }
+    
     protected function requireAdmin() {
         $this->requireAuth();
         if (!isAdmin()) {

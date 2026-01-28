@@ -242,11 +242,11 @@ class AuthController extends Controller {
         $this->redirect('login');
     }
     
-    public function handleGoogleCallback() {
+    private function handleGoogleCallback() {
         // Handle Google OAuth callback
     }
     
-    private function startSession($user) {
+    protected function startSession($user) {
         $_SESSION['user'] = [
             'id' => $user['id'],
             'name' => $user['name'],
