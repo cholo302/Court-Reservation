@@ -9,34 +9,7 @@
         </ol>
     </nav>
     
-    <!-- Status Banner -->
-    <?php
-    $statusConfig = match($booking['status']) {
-        'pending' => ['bg' => 'bg-yellow-100', 'text' => 'text-yellow-800', 'icon' => 'fa-clock', 'label' => 'Pending Payment'],
-        'confirmed' => ['bg' => 'bg-blue-100', 'text' => 'text-blue-800', 'icon' => 'fa-check-circle', 'label' => 'Confirmed'],
-        'paid' => ['bg' => 'bg-green-100', 'text' => 'text-green-800', 'icon' => 'fa-check-double', 'label' => 'Paid'],
-        'completed' => ['bg' => 'bg-green-100', 'text' => 'text-green-800', 'icon' => 'fa-flag-checkered', 'label' => 'Completed'],
-        'cancelled' => ['bg' => 'bg-red-100', 'text' => 'text-red-800', 'icon' => 'fa-times-circle', 'label' => 'Cancelled'],
-        'no_show' => ['bg' => 'bg-gray-100', 'text' => 'text-gray-800', 'icon' => 'fa-user-slash', 'label' => 'No Show'],
-        'expired' => ['bg' => 'bg-gray-100', 'text' => 'text-gray-800', 'icon' => 'fa-hourglass-end', 'label' => 'Expired'],
-        default => ['bg' => 'bg-gray-100', 'text' => 'text-gray-800', 'icon' => 'fa-question-circle', 'label' => ucfirst($booking['status'])]
-    };
-    ?>
-    <div class="<?= $statusConfig['bg'] ?> <?= $statusConfig['text'] ?> rounded-xl p-4 mb-6 flex items-center justify-between">
-        <div class="flex items-center">
-            <i class="fas <?= $statusConfig['icon'] ?> text-2xl mr-3"></i>
-            <div>
-                <p class="font-semibold"><?= $statusConfig['label'] ?></p>
-                <p class="text-sm">Booking #<?= $booking['booking_code'] ?></p>
-            </div>
-        </div>
-        
-        <?php if ($booking['status'] === 'pending'): ?>
-        <a href="<?= url('bookings/' . $booking['id'] . '/pay') ?>" class="bg-ph-blue text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-800 transition">
-            <i class="fas fa-credit-card mr-1"></i>Pay Now
-        </a>
-        <?php endif; ?>
-    </div>
+    
     
     <div class="grid md:grid-cols-3 gap-6">
         <!-- Main Details -->

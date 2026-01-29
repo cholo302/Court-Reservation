@@ -10,18 +10,12 @@
         <div class="flex flex-wrap items-center gap-4">
             <span class="text-gray-700 font-medium">Filter by status:</span>
             <div class="flex flex-wrap gap-2">
-                <a href="<?= url('bookings') ?>" 
-                   class="px-4 py-2 rounded-lg text-sm font-medium transition <?= empty($currentStatus) ? 'bg-ph-blue text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' ?>">
-                    All
-                </a>
+                
                 <a href="<?= url('bookings?status=pending') ?>" 
                    class="px-4 py-2 rounded-lg text-sm font-medium transition <?= $currentStatus === 'pending' ? 'bg-yellow-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' ?>">
                     Pending
                 </a>
-                <a href="<?= url('bookings?status=confirmed') ?>" 
-                   class="px-4 py-2 rounded-lg text-sm font-medium transition <?= $currentStatus === 'confirmed' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' ?>">
-                    Confirmed
-                </a>
+    
                 <a href="<?= url('bookings?status=paid') ?>" 
                    class="px-4 py-2 rounded-lg text-sm font-medium transition <?= $currentStatus === 'paid' ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' ?>">
                     Paid
@@ -123,10 +117,7 @@
                             
                             <!-- Actions -->
                             <div class="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-100">
-                                <a href="<?= url('bookings/' . $booking['id']) ?>" 
-                                   class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition">
-                                    <i class="fas fa-eye mr-2"></i>View Details
-                                </a>
+                                
                                 
                                 <?php if ($booking['status'] === 'pending'): ?>
                                     <a href="<?= url('bookings/' . $booking['id'] . '/pay') ?>" 

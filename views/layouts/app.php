@@ -56,13 +56,7 @@
                 
                 <div class="flex items-center space-x-4">
                     <?php if (isLoggedIn()): ?>
-                        <!-- Notifications -->
-                        <div class="relative" x-data="{ open: false }">
-                            <button @click="open = !open" class="text-gray-600 hover:text-ph-blue relative">
-                                <i class="fas fa-bell text-xl"></i>
-                                <span id="notification-badge" class="hidden absolute -top-1 -right-1 bg-ph-red text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
-                            </button>
-                        </div>
+                        
                         
                         <a href="<?= url('bookings') ?>" class="text-gray-700 hover:text-ph-blue px-3 py-2 rounded-md text-sm font-medium transition">
                             <i class="fas fa-calendar-check mr-1"></i> My Bookings

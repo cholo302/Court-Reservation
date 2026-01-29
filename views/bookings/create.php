@@ -72,21 +72,6 @@
                 </div>
                 <?php endif; ?>
                 
-                <!-- Player Count -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Number of Players (Optional)</label>
-                    <input type="number" name="player_count" min="1" max="<?= $court['capacity'] ?? 30 ?>"
-                        class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-ph-blue focus:border-transparent"
-                        placeholder="How many players?">
-                </div>
-                
-                <!-- Notes -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Special Requests (Optional)</label>
-                    <textarea name="notes" rows="3"
-                        class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-ph-blue focus:border-transparent"
-                        placeholder="Any special requests or notes..."></textarea>
-                </div>
                 
                 <!-- Payment Type -->
                 <div>
@@ -97,22 +82,11 @@
                             <div class="text-center peer-checked:text-ph-blue">
                                 <i class="fas fa-qrcode text-2xl mb-2"></i>
                                 <p class="font-medium">Pay Now (QR)</p>
-                                <p class="text-xs text-gray-500">GCash, Maya, Bank</p>
+                                <p class="text-xs text-gray-500">GCash</p>
                             </div>
                             <div class="absolute inset-0 border-2 border-transparent peer-checked:border-ph-blue rounded-lg"></div>
                         </label>
                         
-                        <label class="relative flex items-center justify-center p-4 border-2 rounded-lg cursor-pointer hover:border-ph-blue transition">
-                            <input type="radio" name="payment_type" value="venue" class="sr-only peer">
-                            <div class="text-center peer-checked:text-ph-blue">
-                                <i class="fas fa-store text-2xl mb-2"></i>
-                                <p class="font-medium">Pay at Venue</p>
-                                <p class="text-xs text-gray-500">Expires in <?= RESERVATION_EXPIRY_MINUTES ?> mins</p>
-                            </div>
-                            <div class="absolute inset-0 border-2 border-transparent peer-checked:border-ph-blue rounded-lg"></div>
-                        </label>
-                    </div>
-                </div>
                 
                 <button type="submit" id="submit-btn" disabled
                     class="w-full bg-ph-blue text-white py-3 rounded-lg font-semibold hover:bg-blue-800 transition disabled:bg-gray-300 disabled:cursor-not-allowed">

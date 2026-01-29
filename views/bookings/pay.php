@@ -66,33 +66,7 @@
                 </div>
             </label>
             
-            <label class="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:border-ph-blue transition">
-                <input type="radio" name="payment_method" value="maya" class="h-5 w-5 text-ph-blue">
-                <div class="ml-4 flex items-center flex-1">
-                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-3">
-                        <span class="text-green-600 font-bold text-lg">M</span>
-                    </div>
-                    <div>
-                        <p class="font-medium">Maya</p>
-                        <p class="text-sm text-gray-500">Pay with Maya QR</p>
-                    </div>
-                </div>
-            </label>
-            
-            <label class="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:border-ph-blue transition">
-                <input type="radio" name="payment_method" value="bank_qr" class="h-5 w-5 text-ph-blue">
-                <div class="ml-4 flex items-center flex-1">
-                    <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
-                        <i class="fas fa-university text-gray-600 text-lg"></i>
-                    </div>
-                    <div>
-                        <p class="font-medium">Bank QR Ph</p>
-                        <p class="text-sm text-gray-500">BPI, UnionBank, BDO, etc.</p>
-                    </div>
-                </div>
-            </label>
-        </div>
-    </div>
+           
     
     <!-- Payment Type Selection -->
     <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
