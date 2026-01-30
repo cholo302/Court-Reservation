@@ -133,17 +133,7 @@ class AdminController extends Controller {
         $bookingData = $booking->findWithDetails($id);
         $booking->cancel($id, $reason);
         
-        // Notify user
-        $notification = new Notification();
-        $notification->createNotification(
-            $bookingData['user_id'],
-            'booking_cancelled',
-            'Booking Cancelled',
-            "Your booking #{$bookingData['booking_code']} has been cancelled. Reason: {$reason}",
-            ['booking_id' => $id],
-            'web'
-        );
-        
+       
         // Log
         $log = new ActivityLog();
         $log->log('booking_cancelled_admin', 'Booking cancelled by admin: ' . $reason, 'booking', $id);
@@ -538,18 +528,6 @@ class AdminController extends Controller {
         exit;
     }
     
-    // Activity Logs
-    public function logs() {
-        $this->requireAdmin();
-        
-        $log = new ActivityLog();
-        $logs = $log->getRecent(100);
-        
-        $this->renderWithLayout('admin.logs', [
-            'title' => 'Activity Logs - ' . APP_NAME,
-            'logs' => $logs,
-        ], 'layouts.admin');
-    }
     
     // Settings
     public function settings() {

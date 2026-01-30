@@ -73,9 +73,6 @@
                 <a href="<?= url('admin/reports') ?>" class="flex items-center px-4 py-2 rounded-lg hover:bg-gray-800 transition <?= strpos($_SERVER['REQUEST_URI'], '/reports') !== false ? 'bg-gray-800' : '' ?>">
                     <i class="fas fa-chart-bar w-5 mr-3"></i> Reports
                 </a>
-                <a href="<?= url('admin/logs') ?>" class="flex items-center px-4 py-2 rounded-lg hover:bg-gray-800 transition <?= strpos($_SERVER['REQUEST_URI'], '/logs') !== false ? 'bg-gray-800' : '' ?>">
-                    <i class="fas fa-history w-5 mr-3"></i> Activity Logs
-                </a>
                 <a href="<?= url('admin/settings') ?>" class="flex items-center px-4 py-2 rounded-lg hover:bg-gray-800 transition <?= strpos($_SERVER['REQUEST_URI'], '/settings') !== false ? 'bg-gray-800' : '' ?>">
                     <i class="fas fa-cog w-5 mr-3"></i> Settings
                 </a>

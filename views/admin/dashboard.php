@@ -199,40 +199,7 @@
             </div>
         </div>
         
-        <!-- Quick Actions -->
-        <div class="bg-white rounded-xl shadow-sm p-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
-            
-            <div class="space-y-3">
-                <a href="<?= url('admin/courts/create') ?>" class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
-                    <div class="w-10 h-10 bg-ph-blue/10 rounded-lg flex items-center justify-center mr-3">
-                        <i class="fas fa-plus text-ph-blue"></i>
-                    </div>
-                    <span class="font-medium">Add New Court</span>
-                </a>
-                
-                <a href="<?= url('admin/scanner') ?>" class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
-                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
-                        <i class="fas fa-qrcode text-green-600"></i>
-                    </div>
-                    <span class="font-medium">Scan Entry QR</span>
-                </a>
-                
-                <a href="<?= url('admin/reports') ?>" class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
-                    <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
-                        <i class="fas fa-chart-bar text-purple-600"></i>
-                    </div>
-                    <span class="font-medium">View Reports</span>
-                </a>
-                
-                <a href="<?= url('admin/reports/export') ?>" class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
-                    <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
-                        <i class="fas fa-file-excel text-yellow-600"></i>
-                    </div>
-                    <span class="font-medium">Export Bookings</span>
-                </a>
-            </div>
-        </div>
+        
         
         <!-- Payment Stats -->
         <div class="bg-white rounded-xl shadow-sm p-6">

@@ -1,9 +1,7 @@
 <div class="flex justify-between items-center mb-6">
     <h1 class="text-2xl font-bold text-gray-900">Booking Management</h1>
     <div class="flex space-x-2">
-        <a href="<?= url('admin/reports/export?type=bookings') ?>" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-            <i class="fas fa-file-excel mr-2"></i>Export Excel
-        </a>
+        
     </div>
 </div>
 

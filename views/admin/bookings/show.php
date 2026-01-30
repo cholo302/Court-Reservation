@@ -150,8 +150,8 @@
         <!-- Sidebar Actions -->
         <div class="space-y-6">
             <!-- Actions -->
-            <div class="bg-white rounded-xl shadow-sm p-6">
-                <h3 class="text-lg font-semibold mb-4">Actions</h3>
+            
+                
                 
                 <div class="space-y-3">
                     <?php if ($booking['status'] === 'pending'): ?>
@@ -199,11 +199,7 @@
                     </form>
                     <?php endif; ?>
                     
-                    <button onclick="sendNotification()" class="w-full border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition">
-                        <i class="fas fa-bell mr-2"></i>Send Notification
-                    </button>
-                </div>
-            </div>
+                    
             
             <!-- Entry QR Code -->
             <?php if (in_array($booking['status'], ['paid', 'completed'])): ?>
@@ -216,80 +212,4 @@
             </div>
             <?php endif; ?>
             
-            <!-- Activity Log -->
-            <div class="bg-white rounded-xl shadow-sm p-6">
-                <h3 class="text-lg font-semibold mb-4">Activity Log</h3>
-                
-                <div class="space-y-4">
-                    <div class="flex items-start">
-                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                            <i class="fas fa-plus text-blue-600 text-xs"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium">Booking Created</p>
-                            <p class="text-xs text-gray-500"><?= date('M d, Y g:i A', strtotime($booking['created_at'])) ?></p>
-                        </div>
-                    </div>
-                    
-                    <?php if (isset($payment) && $payment): ?>
-                    <div class="flex items-start">
-                        <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                            <i class="fas fa-credit-card text-yellow-600 text-xs"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium">Payment Submitted</p>
-                            <p class="text-xs text-gray-500"><?= date('M d, Y g:i A', strtotime($payment['created_at'])) ?></p>
-                        </div>
-                    </div>
-                    
-                    <?php if ($payment['verified_at']): ?>
-                    <div class="flex items-start">
-                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                            <i class="fas fa-check text-green-600 text-xs"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium">Payment Verified</p>
-                            <p class="text-xs text-gray-500"><?= date('M d, Y g:i A', strtotime($payment['verified_at'])) ?></p>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-                    <?php endif; ?>
-                    
-                    <?php if ($booking['status'] === 'cancelled'): ?>
-                    <div class="flex items-start">
-                        <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                            <i class="fas fa-times text-red-600 text-xs"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium">Booking Cancelled</p>
-                            <p class="text-xs text-gray-500"><?= date('M d, Y g:i A', strtotime($booking['updated_at'])) ?></p>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-function sendNotification() {
-    const message = prompt('Enter notification message:');
-    if (message) {
-        fetch('<?= url('api/notifications/send') ?>', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                user_id: <?= $booking['user_id'] ?>,
-                message: message,
-                _token: '<?= csrf_token() ?>'
-            })
-        }).then(response => response.json())
-          .then(data => {
-              alert(data.message);
-          });
-    }
-}
-</script>
+           
