@@ -446,6 +446,56 @@ class AdminController extends Controller {
         flash('success', 'User removed from blacklist.');
         $this->redirect('admin/users');
     }
+
+    public function deactivateUser($id) {
+        $this->requireAdmin();
+        
+        $user = new User();
+        $user->deactivate($id);
+        
+        // Log
+        $log = new ActivityLog();
+        $log->log('user_deactivated', 'User account deactivated', 'user', $id);
+        
+        flash('success', 'User account deactivated.');
+        $this->redirect('admin/users');
+    }
+
+    public function activateUser($id) {
+        $this->requireAdmin();
+        
+        $user = new User();
+        $user->activate($id);
+        
+        // Log
+        $log = new ActivityLog();
+        $log->log('user_activated', 'User account reactivated', 'user', $id);
+        
+        flash('success', 'User account reactivated.');
+        $this->redirect('admin/users');
+    }
+
+    public function deleteUser($id) {
+        $this->requireAdmin();
+
+        // Prevent deleting admin users
+        $user = new User();
+        $userData = $user->find($id);
+        
+        if ($userData && $userData['role'] === 'admin') {
+            flash('error', 'Cannot delete admin users.');
+            $this->redirect('admin/users');
+        }
+
+        $user->deleteUser($id);
+
+        // Log
+        $log = new ActivityLog();
+        $log->log('user_deleted', 'User account deleted', 'user', $id);
+        
+        flash('success', 'User account deleted successfully.');
+        $this->redirect('admin/users');
+    }
     
     // Reports
     public function reports() {

@@ -7,7 +7,8 @@ class User extends Model {
     protected $fillable = [
         'name', 'email', 'phone', 'password', 'role', 'profile_image',
         'email_verified_at', 'phone_verified_at', 'is_blacklisted', 
-        'blacklist_reason', 'provider', 'provider_id', 'remember_token'
+        'blacklist_reason', 'provider', 'provider_id', 'remember_token',
+        'gov_id_type', 'gov_id_photo', 'face_photo'
     ];
     
     public function findByEmail($email) {
@@ -79,6 +80,50 @@ class User extends Model {
     public function isBlacklisted($userId) {
         $user = $this->find($userId);
         return $user && $user['is_blacklisted'];
+    }
+
+    public function deactivate($userId) {
+        $stmt = $this->db->prepare("UPDATE users SET is_active = 0 WHERE id = ?");
+        return $stmt->execute([$userId]);
+    }
+
+    public function activate($userId) {
+        $stmt = $this->db->prepare("UPDATE users SET is_active = 1 WHERE id = ?");
+        return $stmt->execute([$userId]);
+    }
+
+    public function isActive($userId) {
+        $user = $this->find($userId);
+        return $user && $user['is_active'];
+    }
+
+    public function deleteUser($userId) {
+        $user = $this->find($userId);
+        if (!$user) return false;
+
+        // Delete associated photos
+        if (!empty($user['gov_id_photo'])) {
+            $photoPath = BASE_PATH . '/' . $user['gov_id_photo'];
+            if (file_exists($photoPath)) {
+                unlink($photoPath);
+            }
+        }
+        if (!empty($user['face_photo'])) {
+            $photoPath = BASE_PATH . '/' . $user['face_photo'];
+            if (file_exists($photoPath)) {
+                unlink($photoPath);
+            }
+        }
+        if (!empty($user['profile_image'])) {
+            $photoPath = BASE_PATH . '/' . $user['profile_image'];
+            if (file_exists($photoPath)) {
+                unlink($photoPath);
+            }
+        }
+
+        // Delete user from database
+        $stmt = $this->db->prepare("DELETE FROM users WHERE id = ?");
+        return $stmt->execute([$userId]);
     }
     
     public function getStats($userId = null) {

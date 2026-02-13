@@ -41,6 +41,36 @@ if ($request_path !== '/' && substr($request_path, -1) === '/') {
     $request_path = substr($request_path, 0, -1);
 }
 
+// Handle static file requests (storage) - BEFORE bootstrap to avoid Illuminate errors
+if (strpos($request_path, '/storage/') === 0) {
+    // Don't use bootstrap - direct file handling
+    $file_path = realpath(__DIR__ . '/..' . $request_path);
+    $storage_base = realpath(__DIR__ . '/../storage');
+    
+    // Security check
+    if ($file_path && $storage_base && strpos($file_path, $storage_base) === 0 && file_exists($file_path) && is_file($file_path)) {
+        // Get MIME type
+        $finfo = @finfo_open(FILEINFO_MIME_TYPE);
+        if ($finfo) {
+            $mime_type = @finfo_file($finfo, $file_path);
+            @finfo_close($finfo);
+        }
+        if (empty($mime_type)) {
+            $mime_type = 'application/octet-stream';
+        }
+        
+        // Serve file
+        header('Content-Type: ' . $mime_type);
+        header('Content-Length: ' . filesize($file_path));
+        header('Cache-Control: public, max-age=86400');
+        readfile($file_path);
+        exit;
+    }
+    
+    http_response_code(404);
+    exit;
+}
+
 // Route handler
 function route($path, $controller, $method = 'GET')
 {

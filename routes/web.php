@@ -75,6 +75,9 @@ $router->post('/admin/courts/{id}/delete', [AdminController::class, 'deleteCourt
 $router->get('/admin/users', [AdminController::class, 'users']);
 $router->post('/admin/users/{id}/blacklist', [AdminController::class, 'blacklistUser']);
 $router->post('/admin/users/{id}/unblacklist', [AdminController::class, 'unblacklistUser']);
+$router->post('/admin/users/{id}/deactivate', [AdminController::class, 'deactivateUser']);
+$router->post('/admin/users/{id}/activate', [AdminController::class, 'activateUser']);
+$router->post('/admin/users/{id}/delete', [AdminController::class, 'deleteUser']);
 
 $router->get('/admin/reports', [AdminController::class, 'reports']);
 $router->get('/admin/reports/export', [AdminController::class, 'exportBookings']);

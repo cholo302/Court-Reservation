@@ -204,15 +204,14 @@
                 <?php if (isLoggedIn()): ?>
                 <a href="<?= url('bookings/create/' . $court['id']) ?>" 
                     class="block w-full bg-ph-blue text-white text-center py-3 rounded-lg font-semibold hover:bg-blue-800 transition">
-                    <i class="fas fa-calendar-plus mr-2"></i>Book Now
+                    <i class="fas fa-calendar-plus mr-2"></i>Book a Court Now
                 </a>
                 <?php else: ?>
                 <a href="<?= url('login') ?>" 
                     class="block w-full bg-ph-blue text-white text-center py-3 rounded-lg font-semibold hover:bg-blue-800 transition">
-                    <i class="fas fa-sign-in-alt mr-2"></i>Login to Book
+                    <i class="fas fa-sign-in-alt mr-2"></i>Login to Reserve a Court
                 </a>
-                <p class="text-center text-sm text-gray-500 mt-2">
-                    New user? <a href="<?= url('register') ?>" class="text-ph-blue hover:underline">Sign up</a>
+               
                 </p>
                 <?php endif; ?>
                 

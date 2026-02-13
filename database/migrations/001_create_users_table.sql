@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
     profile_image VARCHAR(255),
     email_verified_at TIMESTAMP NULL,
     phone_verified_at TIMESTAMP NULL,
+    is_active BOOLEAN DEFAULT TRUE,
     is_blacklisted BOOLEAN DEFAULT FALSE,
     blacklist_reason TEXT,
     provider VARCHAR(50), -- facebook, google, or null for email

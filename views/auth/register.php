@@ -10,7 +10,7 @@
         </div>
         
         <div class="bg-white rounded-xl shadow-lg p-8">
-            <form action="<?= url('register') ?>" method="POST" class="space-y-5">
+            <form action="<?= url('register') ?>" method="POST" enctype="multipart/form-data" class="space-y-5">
                 <input type="hidden" name="_token" value="<?= csrf_token() ?>">
                 
                 <div>
@@ -75,6 +75,71 @@
                     </div>
                 </div>
                 
+                <!-- Government ID Verification Section -->
+                <div class="border-t pt-5 mt-5">
+                    <h3 class="text-sm font-semibold text-gray-900 mb-3">Government ID Verification</h3>
+                    
+                    <div>
+                        <label for="gov_id_type" class="block text-sm font-medium text-gray-700 mb-1">ID Type</label>
+                        <select id="gov_id_type" name="gov_id_type" required
+                            class="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ph-blue focus:border-transparent">
+                            <option value="">-- Select ID Type --</option>
+                            <option value="lto_license" <?= old('gov_id_type') === 'lto_license' ? 'selected' : '' ?>>LTO Driver's License</option>
+                            <option value="passport" <?= old('gov_id_type') === 'passport' ? 'selected' : '' ?>>Philippine Passport</option>
+                            <option value="nbi" <?= old('gov_id_type') === 'nbi' ? 'selected' : '' ?>>NBI Clearance</option>
+                            <option value="national_id" <?= old('gov_id_type') === 'national_id' ? 'selected' : '' ?>>National ID</option>
+                            <option value="barangay_id" <?= old('gov_id_type') === 'barangay_id' ? 'selected' : '' ?>>Barangay ID</option>
+                            <option value="sss_id" <?= old('gov_id_type') === 'sss_id' ? 'selected' : '' ?>>SSS ID</option>
+                            <option value="tin_id" <?= old('gov_id_type') === 'tin_id' ? 'selected' : '' ?>>TIN ID</option>
+                            <option value="prc_id" <?= old('gov_id_type') === 'prc_id' ? 'selected' : '' ?>>PRC License</option>
+                            <option value="postal_id" <?= old('gov_id_type') === 'postal_id' ? 'selected' : '' ?>>Postal ID</option>
+                        </select>
+                    </div>
+                    
+                    <!-- ID Card Photo Upload -->
+                    <div class="mt-3">
+                        <label for="gov_id_photo" class="block text-sm font-medium text-gray-700 mb-2">Upload ID Card Photo <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <input type="file" id="gov_id_photo" name="gov_id_photo" accept="image/jpeg,image/png,image/gif,image/webp" required
+                                class="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ph-blue focus:border-transparent cursor-pointer"
+                                onchange="previewImage(event, 'gov_id')">
+                        </div>
+                        <p class="mt-1 text-xs text-gray-500">JPG, PNG, GIF or WebP • Max 5MB • Clear photo of your ID</p>
+                        
+                        <!-- ID Card Preview -->
+                        <div id="govIdPreview" class="mt-3 hidden">
+                            <img id="govIdPreviewImage" src="" alt="ID Preview" class="w-full h-auto rounded-lg border border-gray-300 max-h-40">
+                            <button type="button" onclick="clearImage('gov_id')" class="mt-2 text-xs text-red-600 hover:text-red-800 font-medium">
+                                <i class="fas fa-trash mr-1"></i> Remove Photo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Face Photo Section -->
+                <div class="border-t pt-5 mt-5">
+                    <h3 class="text-sm font-semibold text-gray-900 mb-3">Face Photo (Profile)</h3>
+                    
+                    <!-- Face Photo Upload -->
+                    <div>
+                        <label for="face_photo" class="block text-sm font-medium text-gray-700 mb-2">Upload Face Photo <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <input type="file" id="face_photo" name="face_photo" accept="image/jpeg,image/png,image/gif,image/webp" required
+                                class="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ph-blue focus:border-transparent cursor-pointer"
+                                onchange="previewImage(event, 'face')">
+                        </div>
+                        <p class="mt-1 text-xs text-gray-500">JPG, PNG, GIF or WebP • Max 5MB • Clear frontal face photo</p>
+                        
+                        <!-- Face Photo Preview -->
+                        <div id="facePreview" class="mt-3 hidden">
+                            <img id="facePreviewImage" src="" alt="Face Preview" class="w-full h-auto rounded-lg border border-gray-300 max-h-40">
+                            <button type="button" onclick="clearImage('face')" class="mt-2 text-xs text-red-600 hover:text-red-800 font-medium">
+                                <i class="fas fa-trash mr-1"></i> Remove Photo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="flex items-start">
                     <input type="checkbox" id="terms" name="terms" required
                         class="h-4 w-4 mt-1 text-ph-blue focus:ring-ph-blue border-gray-300 rounded">
@@ -118,3 +183,43 @@
         </p>
     </div>
 </div>
+
+<script>
+function previewImage(event, type) {
+    const file = event.target.files[0];
+    
+    let preview, previewImg;
+    if (type === 'gov_id') {
+        preview = document.getElementById('govIdPreview');
+        previewImg = document.getElementById('govIdPreviewImage');
+    } else if (type === 'face') {
+        preview = document.getElementById('facePreview');
+        previewImg = document.getElementById('facePreviewImage');
+    }
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            preview.classList.remove('hidden');
+        }
+        reader.readAsDataURL(file);
+    } else {
+        preview.classList.add('hidden');
+    }
+}
+
+function clearImage(type) {
+    let inputId, previewId;
+    if (type === 'gov_id') {
+        inputId = 'gov_id_photo';
+        previewId = 'govIdPreview';
+    } else if (type === 'face') {
+        inputId = 'face_photo';
+        previewId = 'facePreview';
+    }
+    
+    document.getElementById(inputId).value = '';
+    document.getElementById(previewId).classList.add('hidden');
+}
+</script>
