@@ -8,6 +8,9 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+// Define base path for file operations
+define('BASE_PATH', __DIR__);
+
 // Session settings (must be before session_start)
 ini_set('session.cookie_httponly', 1);
 ini_set('session.use_strict_mode', 1);

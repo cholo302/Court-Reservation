@@ -101,27 +101,66 @@ class User extends Model {
         $user = $this->find($userId);
         if (!$user) return false;
 
+        // Base path to root directory
+        $basePath = __DIR__ . '/../../';
+
         // Delete associated photos
         if (!empty($user['gov_id_photo'])) {
-            $photoPath = BASE_PATH . '/' . $user['gov_id_photo'];
+            $photoPath = $basePath . $user['gov_id_photo'];
             if (file_exists($photoPath)) {
                 unlink($photoPath);
             }
         }
         if (!empty($user['face_photo'])) {
-            $photoPath = BASE_PATH . '/' . $user['face_photo'];
+            $photoPath = $basePath . $user['face_photo'];
             if (file_exists($photoPath)) {
                 unlink($photoPath);
             }
         }
         if (!empty($user['profile_image'])) {
-            $photoPath = BASE_PATH . '/' . $user['profile_image'];
+            $photoPath = $basePath . $user['profile_image'];
             if (file_exists($photoPath)) {
                 unlink($photoPath);
             }
         }
 
-        // Delete user from database
+        // Delete related records in order of dependencies
+        // 1. Delete reviews (depends on bookings, so must be first)
+        $stmt = $this->db->prepare("DELETE FROM reviews WHERE user_id = ?");
+        $stmt->execute([$userId]);
+
+        // 2. Delete bookings
+        $stmt = $this->db->prepare("DELETE FROM bookings WHERE user_id = ?");
+        $stmt->execute([$userId]);
+
+        // 3. Delete payments (first delete payment proofs)
+        $stmt = $this->db->prepare("SELECT id, proof_screenshot FROM payments WHERE user_id = ?");
+        $stmt->execute([$userId]);
+        $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($payments as $payment) {
+            if (!empty($payment['proof_screenshot'])) {
+                $proofPath = $basePath . $payment['proof_screenshot'];
+                if (file_exists($proofPath)) {
+                    unlink($proofPath);
+                }
+            }
+        }
+        $stmt = $this->db->prepare("DELETE FROM payments WHERE user_id = ?");
+        $stmt->execute([$userId]);
+
+        // 4. Delete notifications
+        $stmt = $this->db->prepare("DELETE FROM notifications WHERE user_id = ?");
+        $stmt->execute([$userId]);
+
+        // 5. Delete activity logs
+        $stmt = $this->db->prepare("DELETE FROM activity_logs WHERE user_id = ?");
+        $stmt->execute([$userId]);
+
+        // 6. Delete player lookups
+        $stmt = $this->db->prepare("DELETE FROM player_lookups WHERE user_id = ?");
+        $stmt->execute([$userId]);
+
+        // 7. Finally delete the user
         $stmt = $this->db->prepare("DELETE FROM users WHERE id = ?");
         return $stmt->execute([$userId]);
     }

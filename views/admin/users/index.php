@@ -95,11 +95,15 @@
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-4">
                             <!-- ID Card Photo -->
-                            <?php if (!empty($user['gov_id_photo'])): ?>
+                            <?php if (!empty($user['gov_id_photo']) && file_exists(__DIR__ . '/../../../' . $user['gov_id_photo'])): ?>
                             <div class="relative inline-block">
-                                <img src="/Court-Reservation/<?= htmlspecialchars($user['gov_id_photo']) ?>" alt="ID Card" 
+                                <?php 
+                                    $govIdPath = htmlspecialchars(trim($user['gov_id_photo'], '/'));
+                                    $govIdUrl = '/Court-Reservation/' . $govIdPath;
+                                ?>
+                                <img src="<?= $govIdUrl ?>" alt="ID Card" 
                                     class="w-16 h-16 rounded border-2 border-blue-300 object-cover cursor-pointer hover:opacity-80 transition"
-                                    onclick="openPhotoModal('/Court-Reservation/<?= htmlspecialchars($user['gov_id_photo']) ?>', 'Government ID - <?= htmlspecialchars($user['gov_id_type'] ?? 'Unknown') ?>')">
+                                    onclick="openPhotoModal('<?= $govIdUrl ?>', 'Government ID - <?= htmlspecialchars($user['gov_id_type'] ?? 'Unknown') ?>')">
                                 <span class="absolute bottom-0 right-0 bg-blue-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center border-2 border-white shadow-md">ID</span>
                             </div>
                             <?php else: ?>
@@ -109,11 +113,15 @@
                             <?php endif; ?>
                             
                             <!-- Face Photo -->
-                            <?php if (!empty($user['face_photo'])): ?>
+                            <?php if (!empty($user['face_photo']) && file_exists(__DIR__ . '/../../../' . $user['face_photo'])): ?>
                             <div class="relative inline-block">
-                                <img src="/Court-Reservation/<?= htmlspecialchars($user['face_photo']) ?>" alt="Face Photo" 
+                                <?php 
+                                    $facePath = htmlspecialchars(trim($user['face_photo'], '/'));
+                                    $faceUrl = '/Court-Reservation/' . $facePath;
+                                ?>
+                                <img src="<?= $faceUrl ?>" alt="Face Photo" 
                                     class="w-16 h-16 rounded-full border-2 border-green-300 object-cover cursor-pointer hover:opacity-80 transition"
-                                    onclick="openPhotoModal('/Court-Reservation/<?= htmlspecialchars($user['face_photo']) ?>', 'Face Photo')">
+                                    onclick="openPhotoModal('<?= $faceUrl ?>', 'Face Photo')">
                                 <span class="absolute bottom-0 right-0 bg-green-500 text-white text-sm font-bold rounded-full w-6 h-6 flex items-center justify-center border-2 border-white shadow-md">👤</span>
                             </div>
                             <?php else: ?>
